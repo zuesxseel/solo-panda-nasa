@@ -7,6 +7,8 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { API_CONFIG, createEnhancedPrompt, callHuggingFaceAPI } from './api-config.js';
+import { planetGenerator } from './planet-generator.js';
+import PlanetGeneratorUI from './planet-generator-ui.js';
 
 import bgTexture1 from '/images/1.jpg';
 import bgTexture2 from '/images/2.jpg';
@@ -1154,8 +1156,8 @@ window.checkChatbot = function() {
   }
 };
 
-// ******  PLANET GENERATOR FUNCTIONALITY  ******
-class PlanetGenerator {
+// ******  ENHANCED PLANET GENERATOR WITH SDXL LoRA  ******
+class EnhancedPlanetGenerator {
   constructor() {
     this.container = document.getElementById('planet-generator');
     this.toggle = document.getElementById('generator-toggle');
@@ -1167,6 +1169,9 @@ class PlanetGenerator {
     this.isCollapsed = false;
     this.currentPlanet = null;
     this.generatedTextures = {};
+    
+    // Initialize the new UI component
+    this.ui = new PlanetGeneratorUI('planet-generator', (planet) => this.onPlanetGenerated(planet));
     
     this.initializeEventListeners();
   }
@@ -1181,18 +1186,29 @@ class PlanetGenerator {
     // Size slider
     const sizeSlider = document.getElementById('planet-size');
     const sizeValue = document.getElementById('size-value');
-    sizeSlider.addEventListener('input', (e) => {
-      sizeValue.textContent = e.target.value;
-    });
+    if (sizeSlider && sizeValue) {
+      sizeSlider.addEventListener('input', (e) => {
+        sizeValue.textContent = e.target.value;
+      });
+    }
     
-    // Generate planet button
-    document.getElementById('generate-planet').addEventListener('click', () => this.generatePlanet());
+    // Legacy generate planet button (for backward compatibility)
+    const generateBtn = document.getElementById('generate-planet');
+    if (generateBtn) {
+      generateBtn.addEventListener('click', () => this.generatePlanetLegacy());
+    }
     
     // Regenerate button
-    document.getElementById('regenerate-planet').addEventListener('click', () => this.generatePlanet());
+    const regenerateBtn = document.getElementById('regenerate-planet');
+    if (regenerateBtn) {
+      regenerateBtn.addEventListener('click', () => this.generatePlanetLegacy());
+    }
     
     // Add to solar system button
-    document.getElementById('add-to-solar-system').addEventListener('click', () => this.addToSolarSystem());
+    const addBtn = document.getElementById('add-to-solar-system');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => this.addToSolarSystem());
+    }
   }
   
   toggleGenerator() {
@@ -1201,7 +1217,8 @@ class PlanetGenerator {
     this.toggle.textContent = this.isCollapsed ? '+' : '−';
   }
   
-  async generatePlanet() {
+  // Legacy method for backward compatibility
+  async generatePlanetLegacy() {
     const description = document.getElementById('planet-description').value.trim();
     const planetType = document.getElementById('planet-type').value;
     const size = parseInt(document.getElementById('planet-size').value);
@@ -1217,20 +1234,18 @@ class PlanetGenerator {
     this.showLoading();
     
     try {
-      // Generate enhanced prompt
-      const enhancedPrompt = this.createEnhancedPrompt(description, planetType);
-      
-      // Generate textures
-      const textures = await this.generateTextures(enhancedPrompt, {
+      // Use the new SDXL LoRA planet generator
+      const planet = await planetGenerator.generateCompletePlanet(description, planetType, {
         includeAtmosphere,
-        includeBumpMap
+        guidance_scale: 8.0
       });
       
       // Store generated textures
-      this.generatedTextures = textures;
+      this.generatedTextures = planet.textures;
+      this.currentPlanet = planet;
       
       // Show preview
-      this.showPreview(textures);
+      this.showPreview(planet.textures);
       
     } catch (error) {
       console.error('Error generating planet:', error);
@@ -1239,73 +1254,60 @@ class PlanetGenerator {
     }
   }
   
-  createEnhancedPrompt(description, planetType) {
-    return createEnhancedPrompt(description, planetType, 'surface');
-  }
-  
-  async generateTextures(prompt, options) {
-    const textures = {};
+  // Callback for when a planet is generated from the new UI
+  onPlanetGenerated(planet) {
+    this.currentPlanet = planet;
+    this.generatedTextures = planet.textures;
     
-    // Generate main surface texture
-    console.log('Generating surface texture...');
-    textures.surface = await callHuggingFaceAPI(prompt);
-    
-    // Generate bump map if requested
-    if (options.includeBumpMap) {
-      console.log('Generating bump map...');
-      const description = document.getElementById('planet-description').value.trim();
-      const planetType = document.getElementById('planet-type').value;
-      const bumpPrompt = createEnhancedPrompt(description, planetType, 'bump');
-      textures.bump = await callHuggingFaceAPI(bumpPrompt);
+    // Update legacy UI if it exists
+    if (document.getElementById('surface-preview')) {
+      this.showPreview(planet.textures);
     }
-    
-    // Generate atmosphere if requested
-    if (options.includeAtmosphere) {
-      console.log('Generating atmosphere...');
-      const description = document.getElementById('planet-description').value.trim();
-      const planetType = document.getElementById('planet-type').value;
-      const atmospherePrompt = createEnhancedPrompt(description, planetType, 'atmosphere');
-      textures.atmosphere = await callHuggingFaceAPI(atmospherePrompt);
-    }
-    
-    return textures;
   }
-  
   
   showLoading() {
-    this.form.style.display = 'none';
-    this.preview.style.display = 'none';
-    this.status.style.display = 'block';
+    if (this.form) this.form.style.display = 'none';
+    if (this.preview) this.preview.style.display = 'none';
+    if (this.status) this.status.style.display = 'block';
   }
   
   hideLoading() {
-    this.status.style.display = 'none';
-    this.form.style.display = 'flex';
+    if (this.status) this.status.style.display = 'none';
+    if (this.form) this.form.style.display = 'flex';
   }
   
   showPreview(textures) {
     this.hideLoading();
     
     // Show surface texture
-    document.getElementById('surface-preview').src = textures.surface;
+    const surfacePreview = document.getElementById('surface-preview');
+    if (surfacePreview) {
+      surfacePreview.src = textures.surface;
+    }
     
     // Show bump map if available
     if (textures.bump) {
-      document.getElementById('bump-preview').src = textures.bump;
-      document.getElementById('bump-preview-container').style.display = 'block';
+      const bumpPreview = document.getElementById('bump-preview');
+      const bumpContainer = document.getElementById('bump-preview-container');
+      if (bumpPreview) bumpPreview.src = textures.bump;
+      if (bumpContainer) bumpContainer.style.display = 'block';
     } else {
-      document.getElementById('bump-preview-container').style.display = 'none';
+      const bumpContainer = document.getElementById('bump-preview-container');
+      if (bumpContainer) bumpContainer.style.display = 'none';
     }
     
     // Show atmosphere if available
     if (textures.atmosphere) {
-      document.getElementById('atmosphere-preview').src = textures.atmosphere;
-      document.getElementById('atmosphere-preview-container').style.display = 'block';
+      const atmospherePreview = document.getElementById('atmosphere-preview');
+      const atmosphereContainer = document.getElementById('atmosphere-preview-container');
+      if (atmospherePreview) atmospherePreview.src = textures.atmosphere;
+      if (atmosphereContainer) atmosphereContainer.style.display = 'block';
     } else {
-      document.getElementById('atmosphere-preview-container').style.display = 'none';
+      const atmosphereContainer = document.getElementById('atmosphere-preview-container');
+      if (atmosphereContainer) atmosphereContainer.style.display = 'none';
     }
     
-    this.preview.style.display = 'block';
+    if (this.preview) this.preview.style.display = 'block';
   }
   
   addToSolarSystem() {
@@ -1314,8 +1316,8 @@ class PlanetGenerator {
       return;
     }
     
-    const description = document.getElementById('planet-description').value.trim();
-    const size = parseInt(document.getElementById('planet-size').value);
+    const description = this.currentPlanet ? this.currentPlanet.description : document.getElementById('planet-description').value.trim();
+    const size = parseInt(document.getElementById('planet-size')?.value || 5);
     
     // Create custom planet
     const customPlanet = this.createCustomPlanet(description, size, this.generatedTextures);
@@ -1675,7 +1677,7 @@ class ExoplanetDataTable {
     description += this.getOrbitalDescription(period, orbitalDistance);
     
     // Fill the planet generator form
-    if (planetGenerator) {
+    if (enhancedPlanetGenerator) {
       document.getElementById('planet-description').value = description;
       document.getElementById('planet-type').value = planetAnalysis.planetType;
       document.getElementById('planet-size').value = Math.min(10, Math.max(1, Math.round(radius)));
@@ -1826,13 +1828,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 200);
 });
 
-// Initialize planet generator when the page loads
-let planetGenerator;
+// Initialize enhanced planet generator when the page loads
+let enhancedPlanetGenerator;
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     if (document.getElementById('planet-generator')) {
-      planetGenerator = new PlanetGenerator();
-      console.log('Planet Generator initialized');
+      enhancedPlanetGenerator = new EnhancedPlanetGenerator();
+      console.log('Enhanced Planet Generator with SDXL LoRA initialized');
     }
   }, 200);
 });
