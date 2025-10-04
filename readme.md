@@ -31,13 +31,6 @@ This project is based on the original **3D Solar System in THREE.js** by Karol F
 **Original Project**: https://w21030911.nuwebspace.co.uk/graphics/assessment/
 **License**: MIT License (see LICENSE file)
 
-![Solar_System](images/solar_system.png)
-
-![Earth](images/earthnew.png)
-
-![Mercury](images/mercury.png)
-
-![Mars](images/mars.png)
 
 ## Features
 
@@ -82,32 +75,6 @@ This project is based on the original **3D Solar System in THREE.js** by Karol F
 - **Hover Effect**: White outline around planets when hovered.
 - **Zoom In**: Camera zooms in and displays planet details on click.
 - **Zoom Out**: Returns to default view on closing the pop-up.
-
-## Resources
-3D objects and textures were sourced from the following free repositories:
-- [NASA 3D Resources](https://nasa3d.arc.nasa.gov/images)
-- [Solar System Scope Textures](https://www.solarsystemscope.com/textures/)
-- [Planet Pixel Emporium](https://planetpixelemporium.com/index.php)
-- [TurboSquid](https://www.turbosquid.com/)
-
-## Installation and Setup
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/your-username/3d-solar-system.git
-    ```
-2. Navigate to the project directory:
-    ```sh
-    cd 3d-solar-system
-    ```
-3. Install dependencies:
-    ```sh
-    npm install
-    ```
-4. Start the development server:
-    ```sh
-    npm run dev
-    ```
-5. Open your browser and navigate to `http://localhost:3000` to see the 3D Solar System in action.
 
 ## Conclusion
 This project is a comprehensive representation of our solar system, bringing together realistic modeling, advanced visual effects, and interactive features. Explore the planets, their moons, and the vast asteroid belts, all from the comfort of your screen.
