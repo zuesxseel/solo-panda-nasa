@@ -168,3 +168,4 @@ if (typeof window !== 'undefined') {
   window.envSetup = envSetup;
   console.log('Environment setup utility loaded. Run envSetup.displayStatus() to check configuration.');
 }
+

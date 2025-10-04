@@ -1,86 +1,115 @@
-# 3D Solar System with AI Planet Generation
+# Enhanced 3D Solar System 🌌
 
-Welcome to the **Enhanced 3D Solar System** project, a dynamic and interactive simulation of our solar system created using THREE.js and the Vite framework. This enhanced version includes AI-powered planet generation capabilities, allowing users to create custom planets using text descriptions and see them rendered in real-time 3D.
+A dynamic and interactive simulation of our solar system created using THREE.js and Vite, enhanced with AI-powered planet prediction and generation.
 
 ## 🚀 New Features
 
-### AI-Powered Planet Generation
+### 🔮 AI-Powered Predictive Planet Generation
 - **Custom Planet Creation**: Generate unique planets using text descriptions
-- **Real-time 3D Rendering**: See your generated planets in the 3D solar system
-- **Multiple Texture Types**: Generate surface textures, bump maps, and atmospheric effects
-- **Interactive Chatbot**: AI assistant to help learn about planets and space
-- **Hugging Face Integration**: Uses Stable Diffusion for high-quality planet textures
+- **Predictive Exoplanets**: Uses a trained classifier to suggest scientifically plausible but unconfirmed worlds based on NASA's Kepler Objects of Interest (KOI) dataset
+- **Educational & Fun**: Not meant to be 100% scientifically accurate, but designed to spark curiosity for younger learners
+- **Real-time 3D Rendering**: See your generated planets in the 3D solar system with textures, bump maps, and atmospheric effects
 
-### Exoplanet Database Integration
-- **Real Exoplanet Data**: Load and display actual NASA exoplanet data
-- **Interactive Data Table**: Browse 5 rows of key planetary data
-- **Copy-Paste Functionality**: Copy planet data directly to clipboard
+### 📊 Exoplanet Database Integration
+- **Real NASA Data**: Load and display actual NASA exoplanet data
+- **Interactive Data Table**: Browse planetary data and generate 3D planets with one click
+- **Smart Classification**: System to label planets as Candidate, Confirmed, or False Positive
 - **One-Click Generation**: Generate 3D planets from real exoplanet data
-- **Smart Data Processing**: Automatically determines planet types from scientific data
 
-### Enhanced User Experience
-- **Planet Generator Panel**: Easy-to-use interface for creating custom planets
-- **Preview System**: See generated textures before applying to 3D spheres
-- **Custom Planet Library**: Save and manage your generated planets
-- **Real-time Integration**: Add custom planets to the existing solar system
+### 🎨 Hugging Face AI Textures
+- **Powered by SDXL LoRA**: Uses [sshh12/sdxl-lora-planet-textures](https://huggingface.co/sshh12/sdxl-lora-planet-textures) model
+- **Multiple Texture Types**: Generates surface textures, bump maps, and atmospheres for planets
+- **High-Quality Results**: Specialized model trained specifically for planet textures
+- **Environment Configuration**: Easy setup with `.env` file for API keys
 
-## 📚 Original Project Credits
+### 🔗 Google Colab (Machine Learning Model)
+- **Trained Exoplanet Classifier**: Using NASA's KOI dataset
+- **Colab Notebook**: [View & Run Here](https://colab.research.google.com/drive/1Z7HSndSi9O6kUfRAot1MutMpO8lSazYr?usp=sharing)
+- **Smart Predictions**: Model predicts whether a candidate exoplanet is Confirmed, False Positive, or remains a Candidate
+- **AI Integration**: Results power the Predictive AI Planet Generation mode in this project
 
-This project is based on the original **3D Solar System in THREE.js** by Karol Fryc, available under the MIT License. The original project provided the foundation for the 3D rendering functionality.
+## 🛠️ Tech Stack
 
-**Original Project**: https://w21030911.nuwebspace.co.uk/graphics/assessment/
-**License**: MIT License (see LICENSE file)
+- **Frontend**: THREE.js + Vite
+- **AI Textures**: Stable Diffusion XL (via Hugging Face)
+- **AI Classification**: Python (XGBoost + Isotonic Calibration) in Google Colab
+- **Environment Management**: dotenv for secure configuration
+- **Development**: Cursor IDE for rapid prototyping
 
+## 🎯 Purpose
 
-## Features
+This project bridges science and imagination:
 
-### Standard Setup
-- **Scene, Camera, Renderer**: Basic setup for rendering 3D scenes using THREE.js.
-- **Controls**: Interactive controls for navigating the 3D space.
-- **Texture Loaders**: Efficient loading of textures for planets, moons, and other objects.
+- **For students & young learners**: Makes astronomy fun and interactive
+- **For educators**: A teaching tool to explain how exoplanet data is used in science
+- **For hackathons**: A showcase of combining real NASA data with AI creativity
+- **For developers**: Demonstrates modern web technologies with AI integration
 
-### Postprocessing Effects
-- **BloomPass**: Adds a glowing effect to the Sun.
-- **OutlinePass**: Highlights planets with a white outline when hovered over.
-- **EffectComposer**: Manages and combines all postprocessing effects for rendering.
+## 🚀 Quick Start
 
-### Star Background
-- A realistic starry sky that provides a beautiful backdrop for the solar system.
+### Prerequisites
+- Node.js (v16 or higher)
+- Hugging Face API key (optional, works with placeholders)
 
-### Interactive Controls
-- **dat.GUI**: Allows users to adjust parameters such as orbit speed and the intensity of the Sun's glow.
+### Installation
+```bash
+# Clone the repository
+git clone <repository-url>
+cd solo-panda-nasa
 
-### Lighting
-- **AmbientLight**: Provides soft lighting throughout the scene.
-- **PointLight**: Positioned at the center of the Sun to cast realistic shadows.
+# Install dependencies
+npm install
 
-### Detailed Planet Creation
-- **Attributes**: Size, position, tilt, texture, bump material, rings, and atmospheres.
-- **Moons**: Includes moons with realistic textures and orbits.
-- **Special Materials**: Earth’s ShaderMaterial for day/night transitions and moving clouds.
-- **Non-Spherical Moons**: Phobos and Deimos are modeled from 3D objects for realism.
+# Set up environment variables
+npm run setup-env
 
-### Realistic Orbits and Rotations
-- Planets and moons orbit the Sun and rotate on their axes with scaled distances and speeds.
-- Scaled sizes for better visual representation: Mercury, Venus, Earth, Mars, and Pluto are at actual scale, while larger planets are scaled down for balance.
+# Edit .env file with your Hugging Face API key
+# Get your key from: https://huggingface.co/settings/tokens
 
-### Shadows
-- Realistic shadow casting from the PointLight at the Sun’s center.
+# Start development server
+npm run dev
+```
 
-### Asteroid Belts
-- **Procedurally Generated**: 1000 asteroids for the belt between Mars and Jupiter, 3000 for the Kuiper belt.
-- **Performance Optimization**: Simplified textures to ensure high performance.
+### Environment Setup
+1. Get your Hugging Face API key from [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+2. Run `npm run setup-env` to create your `.env` file
+3. Edit `.env` and replace `your_hugging_face_api_key_here` with your actual API key
+4. Restart the development server
 
-### Select Feature
-- **Hover Effect**: White outline around planets when hovered.
-- **Zoom In**: Camera zooms in and displays planet details on click.
-- **Zoom Out**: Returns to default view on closing the pop-up.
+## 📚 Documentation
 
-## Conclusion
-This project is a comprehensive representation of our solar system, bringing together realistic modeling, advanced visual effects, and interactive features. Explore the planets, their moons, and the vast asteroid belts, all from the comfort of your screen.
+- **[Environment Setup Guide](ENV_SETUP_GUIDE.md)** - Complete setup instructions
+- **[SDXL Integration Guide](SDXL_INTEGRATION.md)** - AI texture generation details
+- **[Google Colab Notebook](https://colab.research.google.com/drive/1Z7HSndSi9O6kUfRAot1MutMpO8lSazYr?usp=sharing)** - Machine learning model training
 
-## License
+## 🧪 Testing
+
+Test your setup in the browser console:
+```javascript
+// Check environment configuration
+envSetup.displayStatus()
+
+// Run integration tests
+sdxlTest.runAllTests()
+
+// Test API connectivity
+envSetup.testApiKey(process.env.HUGGING_FACE_API_KEY)
+```
+
+## 🤝 Contributing
+
+This project welcomes contributions! Whether you're:
+- Adding new planet types or features
+- Improving the AI classification model
+- Enhancing the 3D visualizations
+- Creating educational content
+
+Please feel free to submit issues and pull requests.
+
+## 📄 License
 
 This project is licensed under the [MIT License](./LICENSE).
 
-Feel free to contribute, suggest improvements, or use this project as a foundation for your own THREE.js experiments. Happy exploring!
+---
+
+*Explore the cosmos with AI-powered planet generation! 🪐✨*

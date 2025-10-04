@@ -64,3 +64,4 @@ console.log('2. Run: envSetup.displayStatus()');
 console.log('3. Run: sdxlTest.runAllTests()');
 
 console.log('\n✨ Setup complete! Happy planet generating! 🪐');
+
