@@ -1,0 +1,882 @@
+.planet-info {
+    display: none;
+    position: fixed;
+    left: 1%; 
+    top: 25%; 
+    width: 30%; 
+    z-index: 1;
+}
+
+.planet-info-content {
+    background-color: rgb(0, 0, 35);
+    padding: 20px;
+    border: 1px solid #888;
+    box-shadow: 0px 0px 10px 3px rgba(255,255,0,0.5);
+    color: white;
+    font-family: 'Arial', sans-serif;
+    overflow-y: auto; /* For scrolling */
+}
+
+.close-btn {
+    color: lightyellow;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: white; 
+    cursor: pointer;
+}
+
+h2 {
+    color: lightyellow; 
+}
+
+p {
+    color: white; 
+    line-height: 1.5; 
+}
+
+
+/* Planet Generator Styles */
+.planet-generator {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 400px;
+    height: 600px;
+    background: linear-gradient(135deg, rgba(0, 0, 35, 0.95), rgba(0, 20, 50, 0.95));
+    border: 1px solid #444;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px 5px rgba(255, 100, 0, 0.3);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.planet-generator.collapsed {
+    height: 60px;
+}
+
+.planet-generator.collapsed .generator-content {
+    display: none;
+}
+
+.generator-header {
+    background: linear-gradient(90deg, rgba(255, 100, 0, 0.8), rgba(255, 150, 50, 0.8));
+    padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #444;
+}
+
+.generator-header h3 {
+    color: #FFD700;
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.generator-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #FFD700;
+    color: #FFD700;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.generator-toggle:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.generator-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+    overflow-y: auto;
+}
+
+.generator-form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+    pointer-events: auto !important;
+    user-select: text !important;
+    z-index: 9999 !important;
+    position: relative !important;
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+    border: 2px solid #FFD700 !important;
+    outline: none !important;
+}
+
+/* Force textarea to be on top of everything */
+#planet-description {
+    z-index: 99999 !important;
+    position: relative !important;
+    pointer-events: auto !important;
+    user-select: text !important;
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+    border: 2px solid #FFD700 !important;
+    outline: 2px solid #00ff00 !important;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5) !important;
+    caret-color: #00ff00 !important;
+    cursor: text !important;
+}
+
+#planet-description:focus {
+    outline: 3px solid #00ff00 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.8) !important;
+    border-color: #00ff00 !important;
+}
+
+.form-group input[type="range"] {
+    padding: 0;
+    height: 20px;
+}
+
+.form-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #FFD700;
+}
+
+#size-value {
+    color: #FFD700;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.generate-btn {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #FF6B35, #FF8E53);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.generate-btn:hover {
+    background: linear-gradient(135deg, #FF8E53, #FF6B35);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+}
+
+.generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.generation-status {
+    padding: 40px 20px;
+    text-align: center;
+    color: #FFD700;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 215, 0, 0.3);
+    border-top: 4px solid #FFD700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.planet-preview {
+    padding: 20px;
+    color: white;
+}
+
+.planet-preview h4 {
+    color: #FFD700;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.preview-images {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.preview-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.preview-item h5 {
+    color: #FFD700;
+    margin: 0 0 10px 0;
+    font-size: 14px;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #555;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.regenerate-btn,
+.add-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.regenerate-btn {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+}
+
+.regenerate-btn:hover {
+    background: linear-gradient(135deg, #66BB6A, #4CAF50);
+    transform: translateY(-2px);
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #2196F3, #42A5F5);
+}
+
+.add-btn:hover {
+    background: linear-gradient(135deg, #42A5F5, #2196F3);
+    transform: translateY(-2px);
+}
+
+/* Scrollbar for generator content */
+.generator-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.generator-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.generator-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.5);
+    border-radius: 3px;
+}
+
+.generator-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 215, 0, 0.7);
+}
+
+/* Exoplanet Data Table Styles */
+.exoplanet-data {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 600px;
+    height: 500px;
+    background: linear-gradient(135deg, rgba(0, 0, 35, 0.95), rgba(0, 20, 50, 0.95));
+    border: 1px solid #444;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px 5px rgba(0, 255, 100, 0.3);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.exoplanet-data.collapsed {
+    height: 60px;
+}
+
+.exoplanet-data.collapsed .data-content {
+    display: none;
+}
+
+.data-header {
+    background: linear-gradient(90deg, rgba(0, 150, 100, 0.8), rgba(0, 200, 150, 0.8));
+    padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid #444;
+}
+
+.data-header h3 {
+    color: #00FF88;
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.data-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #00FF88;
+    color: #00FF88;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.data-toggle:hover {
+    background: rgba(0, 255, 136, 0.2);
+    transform: scale(1.1);
+}
+
+.data-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.data-controls {
+    padding: 15px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.data-controls input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #555;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.data-controls input:focus {
+    border-color: #00FF88;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.data-controls input::placeholder {
+    color: #888;
+}
+
+.load-data-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #00FF88, #00CC66);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.load-data-btn:hover {
+    background: linear-gradient(135deg, #00CC66, #00FF88);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+}
+
+
+.data-table-container {
+    flex: 1;
+    overflow: auto;
+    padding: 0;
+}
+
+.exoplanet-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    font-size: 12px;
+}
+
+.exoplanet-table th {
+    background: rgba(0, 150, 100, 0.8);
+    color: #00FF88;
+    padding: 10px 8px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 2px solid #00FF88;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.exoplanet-table td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+    vertical-align: middle;
+}
+
+.exoplanet-table tr:hover {
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.no-data {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px;
+}
+
+.copy-btn {
+    padding: 6px 12px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 4px;
+}
+
+.copy-btn:hover {
+    background: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.generate-btn-small {
+    padding: 6px 12px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.generate-btn-small:hover {
+    background: #FF6B35;
+    border-color: #FF6B35;
+}
+
+/* Scrollbar for data table */
+.data-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.data-table-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.data-table-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 136, 0.5);
+    border-radius: 3px;
+}
+
+.data-table-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 136, 0.7);
+}
+
+/* ExoSleuth AI Dashboard Styles */
+.exosleuth-dashboard {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 500px;
+    background: linear-gradient(135deg, rgba(0, 50, 100, 0.95), rgba(25, 25, 75, 0.95));
+    border: 2px solid #4A90E2;
+    border-radius: 15px;
+    color: white;
+    z-index: 100;
+    max-height: 80vh;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 30px rgba(74, 144, 226, 0.3);
+}
+
+.exosleuth-dashboard.collapsed {
+    height: 60px;
+    overflow: hidden;
+}
+
+.exosleuth-dashboard.collapsed .data-content {
+    display: none;
+}
+
+.exosleuth-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.exosleuth-table th,
+.exosleuth-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #4A90E2;
+}
+
+.exosleuth-table th {
+    background: linear-gradient(90deg, #1a1a2e, #16213e);
+    color: #87CEEB;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    text-shadow: 0 0 5px rgba(135, 206, 235, 0.5);
+}
+
+.exosleuth-table tr {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.exosleuth-table tr:hover {
+    background: rgba(74, 144, 226, 0.2);
+    transform: translateX(2px);
+    box-shadow: 0 2px 10px rgba(74, 144, 226, 0.3);
+}
+
+/* Color-coded rows for classifications */
+.exosleuth-table tr.confirmed {
+    background: rgba(0, 255, 0, 0.1);
+    border-left: 4px solid #00ff00;
+}
+
+.exosleuth-table tr.candidate {
+    background: rgba(255, 255, 0, 0.1);
+    border-left: 4px solid #ffff00;
+}
+
+.exosleuth-table tr.false-positive {
+    background: rgba(255, 0, 0, 0.1);
+    border-left: 4px solid #ff0000;
+}
+
+/* AI Classification column styling */
+.ai-classification {
+    font-weight: bold;
+}
+
+.ai-classification.confirmed {
+    color: #00ff00;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.ai-classification.candidate {
+    color: #ffff00;
+    text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+}
+
+.ai-classification.false-positive {
+    color: #ff0000;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Confidence gauge */
+.confidence-gauge {
+    display: inline-block;
+    width: 60px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    margin-left: 5px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Visualization buttons */
+.visualization-btn {
+    padding: 4px 8px;
+    margin: 2px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.nasa-model-btn {
+    background: linear-gradient(45deg, #00ff00, #00cc00);
+    color: white;
+}
+
+.nasa-model-btn:hover {
+    background: linear-gradient(45deg, #00cc00, #00aa00);
+    transform: scale(1.05);
+}
+
+.simulate-btn {
+    background: linear-gradient(45deg, #ffff00, #ffcc00);
+    color: black;
+}
+
+.simulate-btn:hover {
+    background: linear-gradient(45deg, #ffcc00, #ffaa00);
+    transform: scale(1.05);
+}
+
+.discard-text {
+    color: #ff0000;
+    font-style: italic;
+    font-size: 10px;
+}
+
+/* AI Insights Panel */
+.ai-insights-panel {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 350px;
+    background: linear-gradient(135deg, rgba(100, 0, 150, 0.95), rgba(50, 0, 100, 0.95));
+    border: 2px solid #8A2BE2;
+    border-radius: 15px;
+    color: white;
+    z-index: 200;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+}
+
+.insights-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(90deg, #1a1a2e, #16213e);
+    border-bottom: 1px solid #8A2BE2;
+}
+
+.insights-header h4 {
+    margin: 0;
+    color: #DDA0DD;
+    text-shadow: 0 0 5px rgba(221, 160, 221, 0.5);
+}
+
+.close-insights {
+    background: none;
+    border: none;
+    color: #DDA0DD;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.insights-content {
+    padding: 15px;
+}
+
+.insights-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.nasa-btn, .simulate-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.nasa-btn {
+    background: linear-gradient(45deg, #00ff00, #00cc00);
+    color: white;
+}
+
+.simulate-btn {
+    background: linear-gradient(45deg, #ffff00, #ffcc00);
+    color: black;
+}
+
+.ai-footer {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+}
+
+/* Tab Switcher */
+.tab-switcher {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4A90E2;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 15px;
+    background: transparent;
+    border: none;
+    color: #87CEEB;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background: rgba(74, 144, 226, 0.2);
+    color: #ffffff;
+}
+
+.tab-btn.active {
+    background: rgba(74, 144, 226, 0.3);
+    color: #ffffff;
+    border-bottom-color: #00ff00;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* AI-Inferred Worlds Styling */
+.ai-worlds-table tr {
+    border-left: 4px solid #8A2BE2;
+}
+
+.ai-worlds-table tr:hover {
+    background: rgba(138, 43, 226, 0.2);
+    transform: translateX(2px);
+    box-shadow: 0 2px 10px rgba(138, 43, 226, 0.3);
+}
+
+.predicted-type {
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.predicted-type.rocky {
+    background: #8B4513;
+    color: white;
+}
+
+.predicted-type.gas-giant {
+    background: #FFD700;
+    color: black;
+}
+
+.predicted-type.ice-world {
+    background: #87CEEB;
+    color: black;
+}
+
+.predicted-type.ocean-world {
+    background: #0066CC;
+    color: white;
+}
+
+.ai-description {
+    font-style: italic;
+    color: #DDA0DD;
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+.size-note {
+    margin-top: 5px;
+    color: #888;
+    font-size: 10px;
+}
+
+.size-note small {
+    color: #aaa;
+}

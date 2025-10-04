@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #gui-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="gui-container"></div>
+    
+    
+    <div><script type="module" src="./script_clean.js"></script></div>
+    
+    <!-- ExoSleuth AI Dashboard -->
+    <div id="exosleuth-dashboard" class="exosleuth-dashboard">
+        <div class="data-header">
+            <h3>ExoSleuth: Known to Unknown</h3>
+            <button id="data-toggle" class="data-toggle">−</button>
+        </div>
+        <div id="data-content" class="data-content">
+            <!-- Tab Switcher -->
+            <div class="tab-switcher">
+                <button id="confirmed-candidate-tab" class="tab-btn active">Confirmed & Candidate Worlds</button>
+                <button id="ai-inferred-tab" class="tab-btn">AI-Inferred Worlds</button>
+            </div>
+            
+            <!-- Confirmed & Candidate Worlds Tab -->
+            <div id="confirmed-candidate-content" class="tab-content active">
+                <div class="data-controls">
+                    <input type="text" id="data-search" placeholder="Search exoplanets (Kepler, K2, TOI)..." />
+                    <button id="load-data" class="load-data-btn">Load NASA Database</button>
+                </div>
+                <div id="data-table-container" class="data-table-container">
+                    <table id="exosleuth-table" class="exosleuth-table">
+                        <thead>
+                            <tr>
+                                <th>Planet Name</th>
+                                <th>Catalog ID</th>
+                                <th>Confidence</th>
+                                <th>Period (days)</th>
+                                <th>Disposition</th>
+                                <th>AI Confidence (from NASA datasets)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="exosleuth-tbody">
+                            <tr>
+                                <td colspan="7" class="no-data">Click "Load NASA Database" to load confirmed and candidate worlds</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="ai-footer">
+                        <p><em>*AI Confidence based on XGBoost + Isotonic Calibration model trained on NASA KOI, K2, and TOI datasets (81% accuracy).*</em></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI-Inferred Worlds Tab -->
+            <div id="ai-inferred-content" class="tab-content">
+                <div class="data-controls">
+                    <button id="generate-ai-worlds" class="load-data-btn">Generate AI-Inferred Worlds</button>
+                </div>
+                <div id="ai-worlds-table-container" class="data-table-container">
+                    <table id="ai-worlds-table" class="exosleuth-table">
+                        <thead>
+                            <tr>
+                                <th>Planet Name</th>
+                                <th>Predicted Type</th>
+                                <th>Confidence (%)</th>
+                                <th>Source Pattern</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ai-worlds-tbody">
+                            <tr>
+                                <td colspan="6" class="no-data">Click "Generate AI-Inferred Worlds" to create predictive planets</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="ai-footer">
+                        <p><em>*These planets are AI-inferred simulations based on KOI dataset patterns. They are not confirmed NASA planets.*</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Insights Panel -->
+    <div id="ai-insights-panel" class="ai-insights-panel" style="display: none;">
+        <div class="insights-header">
+            <h4>🧠 AI Insights</h4>
+            <button id="close-insights" class="close-insights">×</button>
+        </div>
+        <div class="insights-content">
+            <div id="insights-text"></div>
+            <div class="insights-actions">
+                <button id="load-nasa-model" class="nasa-btn" style="display: none;">Load NASA Model</button>
+                <button id="simulate-ai-planet" class="simulate-btn" style="display: none;">Simulate AI Planet</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Planet Generator Panel -->
+    <div id="planet-generator" class="planet-generator">
+        <div class="generator-header">
+            <h3>AI Hypothesis Simulator</h3>
+            <button id="generator-toggle" class="generator-toggle">−</button>
+        </div>
+        <div id="generator-content" class="generator-content">
+            <div class="generator-form">
+                <div class="form-group">
+                    <label for="planet-description">Hypothesis Context:</label>
+                    <textarea 
+                        id="planet-description" 
+                        name="planet-description"
+                        placeholder="Describe your hypothesis... (e.g., 'If a twin of Kepler-22b formed slightly closer to its star...')"
+                        autocomplete="off"
+                        spellcheck="true"
+                        style="
+                            width: 100%;
+                            min-height: 80px;
+                            padding: 15px;
+                            border: 3px solid #00ff00;
+                            border-radius: 10px;
+                            background: #1a1a1a;
+                            color: #ffffff;
+                            font-size: 16px;
+                            font-family: Arial, sans-serif;
+                            resize: vertical;
+                            z-index: 999999;
+                            position: relative;
+                            pointer-events: auto;
+                            user-select: text;
+                            outline: 3px solid #00ff00;
+                            box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+                            caret-color: #00ff00;
+                            cursor: text;
+                            display: block;
+                            visibility: visible;
+                            opacity: 1;
+                        "
+                        onfocus="console.log('TEXTAREA FOCUSED!'); this.style.border='3px solid #ff0000'; this.style.boxShadow='0 0 25px rgba(255, 0, 0, 1)';"
+                        onblur="this.style.border='3px solid #00ff00'; this.style.boxShadow='0 0 20px rgba(0, 255, 0, 0.8)';"
+                        onclick="console.log('TEXTAREA CLICKED!'); this.focus();"
+                        onkeydown="console.log('KEY PRESSED:', event.key);"
+                        oninput="console.log('TEXT CHANGED:', this.value);"
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="planet-type">Predicted Formation Type:</label>
+                    <select id="planet-type">
+                        <option value="rocky">Rocky Planet</option>
+                        <option value="gas-giant">Gas Giant</option>
+                        <option value="ice-world">Ice World</option>
+                        <option value="desert">Desert World</option>
+                        <option value="ocean">Ocean World</option>
+                        <option value="volcanic">Volcanic World</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="planet-size">Size:</label>
+                    <input type="range" id="planet-size" min="1" max="10" value="5">
+                    <span id="size-value">5</span>
+                    <div class="size-note">
+                        <small><em>Size and distance will adjust based on pattern similarity to known KOI planets.</em></small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="atmosphere">Include Atmosphere:</label>
+                    <input type="checkbox" id="atmosphere" checked>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bump-map">Include Surface Detail:</label>
+                    <input type="checkbox" id="bump-map" checked>
+                </div>
+                
+                <button id="generate-planet" class="generate-btn">🚀 Generate Planet</button>
+            </div>
+            
+            <div id="generation-status" class="generation-status" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Generating your planet...</p>
+            </div>
+            
+            <div id="planet-preview" class="planet-preview" style="display: none;">
+                <h4>Generated Planet Preview:</h4>
+                <div class="preview-images">
+                    <div class="preview-item">
+                        <h5>Surface Texture</h5>
+                        <img id="surface-preview" alt="Surface texture">
+                    </div>
+                    <div class="preview-item" id="bump-preview-container" style="display: none;">
+                        <h5>Surface Detail</h5>
+                        <img id="bump-preview" alt="Bump map">
+                    </div>
+                    <div class="preview-item" id="atmosphere-preview-container" style="display: none;">
+                        <h5>Atmosphere</h5>
+                        <img id="atmosphere-preview" alt="Atmosphere">
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button id="regenerate-planet" class="regenerate-btn">🔄 Regenerate</button>
+                    <button id="add-to-solar-system" class="add-btn">➕ Add to Solar System</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="planetInfo" class="planet-info">
+        <div class="planet-info-content">
+            <span class="close-btn" onclick="closeInfo()">&times;</span>
+            <h2 id="planetName"></h2>
+            <p id="planetDetails"></p>
+        </div>
+    </div>
+</body>
+</html>
