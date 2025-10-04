@@ -1,15 +1,35 @@
 // API Configuration for Planet Generation
 // This file contains the configuration for the Hugging Face API integration with SDXL LoRA
 
+// Load environment variables
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Get API key from environment variables
+const getApiKey = () => {
+  // Check for API key in environment variables first
+  if (process.env.HUGGING_FACE_API_KEY && process.env.HUGGING_FACE_API_KEY !== 'your_hugging_face_api_key_here') {
+    return process.env.HUGGING_FACE_API_KEY;
+  }
+  
+  // Fallback to placeholder if no valid API key found
+  return 'YOUR_HUGGING_FACE_API_KEY_HERE';
+};
+
+const apiKey = getApiKey();
+
 export const API_CONFIG = {
   // Hugging Face Inference API Configuration for SDXL LoRA Planet Textures
   HUGGING_FACE: {
-    BASE_URL: 'https://api-inference.huggingface.co/models/sshh12/sdxl-lora-planet-textures',
-    API_KEY: 'YOUR_HUGGING_FACE_API_KEY_HERE', // Replace with your actual API key
+    BASE_URL: process.env.HUGGING_FACE_MODEL_URL || 'https://api-inference.huggingface.co/models/sshh12/sdxl-lora-planet-textures',
+    API_KEY: apiKey,
     HEADERS: {
-      'Authorization': 'Bearer YOUR_HUGGING_FACE_API_KEY_HERE',
+      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
-    }
+    },
+    // Additional configuration from environment
+    MAX_RETRIES: parseInt(process.env.HUGGING_FACE_MAX_RETRIES) || 3,
+    TIMEOUT: parseInt(process.env.HUGGING_FACE_TIMEOUT) || 30000
   },
   
   // Image generation settings
@@ -95,7 +115,8 @@ export async function callHuggingFaceAPI(prompt, apiKey = null, options = {}) {
   }
   
   // Rate limiting check
-  if (window.apiCallCount && window.apiCallCount > 10) {
+  const maxCalls = parseInt(process.env.MAX_API_CALLS_PER_MINUTE) || 10;
+  if (window.apiCallCount && window.apiCallCount > maxCalls) {
     console.warn('Rate limit reached. Using placeholder texture.');
     return createPlaceholderTexture(prompt);
   }
@@ -156,20 +177,35 @@ export async function callHuggingFaceAPI(prompt, apiKey = null, options = {}) {
     return URL.createObjectURL(blob);
     
   } catch (error) {
-    console.error('Error calling Hugging Face API:', error);
+    const isDebugMode = process.env.DEBUG_MODE === 'true';
+    
+    if (isDebugMode) {
+      console.error('Error calling Hugging Face API:', error);
+    }
     
     // Return placeholder texture with error information
     const placeholder = createPlaceholderTexture(prompt);
     
     // Show user-friendly error message
     if (error.message.includes('API key')) {
-      alert('Please configure your Hugging Face API key in the settings to generate custom planets.');
+      if (isDebugMode) {
+        console.warn('API key not configured. Please set HUGGING_FACE_API_KEY in your .env file.');
+      }
+      alert('Please configure your Hugging Face API key in the .env file to generate custom planets.');
     } else if (error.message.includes('Rate limit')) {
+      if (isDebugMode) {
+        console.warn('Rate limit exceeded. Consider adjusting MAX_API_CALLS_PER_MINUTE in .env file.');
+      }
       alert('Too many requests. Please wait a moment before generating another planet.');
     } else if (error.message.includes('Service temporarily unavailable')) {
+      if (isDebugMode) {
+        console.warn('Service unavailable. The model may be loading.');
+      }
       alert('The AI service is temporarily unavailable. Using placeholder texture.');
     } else {
-      console.warn('Using placeholder texture due to error:', error.message);
+      if (isDebugMode) {
+        console.warn('Using placeholder texture due to error:', error.message);
+      }
     }
     
     return placeholder;

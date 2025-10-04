@@ -3,6 +3,7 @@
 
 import { planetGenerator } from './planet-generator.js';
 import { generatePlanetTexture, PLANET_PRESETS } from './api-config.js';
+import { envSetup } from './env-setup.js';
 
 export class SDXLIntegrationTest {
   constructor() {
@@ -21,10 +22,13 @@ export class SDXLIntegrationTest {
     console.log('🚀 Starting SDXL LoRA Integration Tests...');
 
     try {
-      // Test 1: API Configuration
+      // Test 1: Environment Configuration
+      await this.testEnvironmentConfiguration();
+      
+      // Test 2: API Configuration
       await this.testAPIConfiguration();
       
-      // Test 2: Planet Generator Service
+      // Test 3: Planet Generator Service
       await this.testPlanetGeneratorService();
       
       // Test 3: Texture Generation
@@ -45,6 +49,47 @@ export class SDXLIntegrationTest {
       console.error('Test suite failed:', error);
     } finally {
       this.isRunning = false;
+    }
+  }
+
+  async testEnvironmentConfiguration() {
+    console.log('🌍 Testing Environment Configuration...');
+    
+    try {
+      // Test environment setup utility
+      const status = envSetup.checkEnvironment();
+      
+      if (!status.configured) {
+        console.warn('Environment not fully configured:', status.missing);
+      }
+      
+      // Test configuration summary
+      const configSummary = envSetup.getConfigSummary();
+      
+      // Test API key validation
+      const apiKey = process.env.HUGGING_FACE_API_KEY;
+      const keyValidation = envSetup.validateApiKey(apiKey);
+      
+      this.testResults.push({
+        name: 'Environment Configuration',
+        status: status.configured ? 'PASS' : 'WARN',
+        message: status.configured ? 
+          'Environment properly configured' : 
+          `Missing: ${status.missing.join(', ')}. Check .env file.`
+      });
+      
+      // Additional info about configuration
+      console.log('📋 Configuration Summary:', configSummary);
+      if (!keyValidation.valid) {
+        console.warn('🔑 API Key Status:', keyValidation.message);
+      }
+      
+    } catch (error) {
+      this.testResults.push({
+        name: 'Environment Configuration',
+        status: 'FAIL',
+        message: error.message
+      });
     }
   }
 

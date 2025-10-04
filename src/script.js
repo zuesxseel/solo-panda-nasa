@@ -9,6 +9,7 @@ import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { API_CONFIG, createEnhancedPrompt, callHuggingFaceAPI } from './api-config.js';
 import { planetGenerator } from './planet-generator.js';
 import PlanetGeneratorUI from './planet-generator-ui.js';
+import { envSetup } from './env-setup.js';
 
 import bgTexture1 from '/images/1.jpg';
 import bgTexture2 from '/images/2.jpg';
@@ -1832,6 +1833,9 @@ document.addEventListener('DOMContentLoaded', () => {
 let enhancedPlanetGenerator;
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
+    // Check environment configuration
+    envSetup.displayStatus();
+    
     if (document.getElementById('planet-generator')) {
       enhancedPlanetGenerator = new EnhancedPlanetGenerator();
       console.log('Enhanced Planet Generator with SDXL LoRA initialized');
