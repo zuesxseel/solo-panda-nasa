@@ -106,6 +106,8 @@ This project welcomes contributions! Whether you're:
 
 Please feel free to submit issues and pull requests.
 
+## 🙏 Credits
+This project is based on the original **3D Solar System in THREE.js** by [Karol Fryc](https://w21030911.nuwebspace.co.uk/graphics/assessment/), available under the MIT License. The original project provided the foundation for the 3D rendering functionality.
 ## 📄 License
 
 This project is licensed under the [MIT License](./LICENSE).
